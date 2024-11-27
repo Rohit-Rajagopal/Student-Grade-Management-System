@@ -1,0 +1,33 @@
+{% include "header.html" %}
+
+<h1 style="text-align: center">Grades</h1>
+<h2 style="text-align: center">{{ user.usn }}</h2>
+
+<div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Subject Code</th>
+                <th scope="col">Title</th>
+                <th scope="col">Internal marks</th>
+                <th scope="col">External marks</th>
+                <th scope="col">Total</th>
+                <th scope="col">Credits</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for sub in user.grades %}
+            <tr>
+                <td>{{ sub.subject_code }}</td>
+                <td>{{ sub.subject }}</td>
+                <td>{{ sub.internal_marks }}</td>
+                <td>{{ sub.external_marks }}</td>
+                <td>{{ sub.internal_marks + sub.external_marks }}</td>
+                <td>{{ sub.subject_credits }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% include "footer.html" %}

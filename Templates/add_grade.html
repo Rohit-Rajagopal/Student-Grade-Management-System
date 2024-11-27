@@ -1,0 +1,10 @@
+{% include "header.html" %}
+
+{% from "bootstrap5/form.html" import render_form %}
+
+<h1 style="text-align: center">Add Grades</h1>
+<div>
+    {{ render_form(form) }}
+</div>
+
+{% include "footer.html" %}

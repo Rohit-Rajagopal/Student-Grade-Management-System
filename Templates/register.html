@@ -1,0 +1,10 @@
+{% include "header.html" %}
+
+{% from 'bootstrap5/form.html' import render_form %}
+
+<div>
+    <h2 style="text-align: center">New User</h2>
+    {{ render_form(form) }}
+</div>
+
+{% include "footer.html" %}
