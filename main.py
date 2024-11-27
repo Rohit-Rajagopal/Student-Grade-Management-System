@@ -71,7 +71,6 @@ def teacher_only(function):
 def student_specific(function):
     @wraps(function)
     def wrapper_function(*args, **kwargs):
-        print(args)
         if current_user.is_authenticated and current_user.designation == 'Teacher':
             return function(*args, **kwargs)
         elif (current_user.is_authenticated and current_user.designation == 'Student' and
@@ -196,7 +195,13 @@ def add_grade():
 @student_specific
 def show_grades():
     user = db.session.execute(db.select(User).where(User.usn == request.args.get('usn'))).scalar()
-    return render_template('grades.html', user=user)
+    semesters = []
+    for i in range(1, 9):
+        for sub in user.grades:
+            if sub.semester == i:
+                semesters.append(i)
+                break
+    return render_template('grades.html', user=user, semesters=semesters)
 
 
 if __name__ == "__main__":

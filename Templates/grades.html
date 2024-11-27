@@ -4,6 +4,10 @@
 <h2 style="text-align: center">{{ user.usn }}</h2>
 
 <div>
+    {% for sem in semesters %}
+    <p>{{flag}}</p>
+    <h3><br>Semester {{ sem }}:</h3>
+
     <table class="table">
         <thead>
             <tr>
@@ -17,6 +21,7 @@
         </thead>
         <tbody>
             {% for sub in user.grades %}
+            {% if sub.semester == sem %}
             <tr>
                 <td>{{ sub.subject_code }}</td>
                 <td>{{ sub.subject }}</td>
@@ -25,9 +30,11 @@
                 <td>{{ sub.internal_marks + sub.external_marks }}</td>
                 <td>{{ sub.subject_credits }}</td>
             </tr>
+            {% endif %}
             {% endfor %}
         </tbody>
     </table>
+    {% endfor %}
 </div>
 
 {% include "footer.html" %}
