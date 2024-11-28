@@ -200,6 +200,12 @@ def add_grade():
             grade.remarks = form.remarks.data
         else:
             grade.remarks = None
+        if db.session.execute(db.select(UserGrade).where(
+                (UserGrade.subject_code == form.subject_code.data.upper()) &
+                (UserGrade.student_id == (db.session.execute(db.select(User).where(User.usn == form.usn.data.upper()))).scalar().id))) is not None:
+            old_grade = db.session.execute(
+                db.select(UserGrade).where(UserGrade.subject_code == form.subject_code.data.upper())).scalar()
+            db.session.delete(old_grade)
         db.session.add(grade)
         db.session.commit()
         return redirect(url_for('add_grade'))
