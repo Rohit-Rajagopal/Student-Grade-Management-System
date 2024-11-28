@@ -17,6 +17,8 @@
                 <th scope="col">External marks</th>
                 <th scope="col">Total</th>
                 <th scope="col">Credits</th>
+                <th scope="col">Result</th>
+                <th scope="col">Remarks</th>
             </tr>
         </thead>
         <tbody>
@@ -29,6 +31,12 @@
                 <td>{{ sub.external_marks }}</td>
                 <td>{{ sub.internal_marks + sub.external_marks }}</td>
                 <td>{{ sub.subject_credits }}</td>
+                <td>{{ sub.is_pass }}</td>
+                {% if sub.remarks is not none %}
+                <td>{{ sub.remarks }}</td>
+                {% else %}
+                <td></td>
+                {% endif %}
             </tr>
             {% endif %}
             {% endfor %}

@@ -52,10 +52,20 @@ class UserGrade(db.Model):
     external_marks: Mapped[int] = mapped_column(Integer)
     subject_credits: Mapped[int] = mapped_column(Integer)
     semester: Mapped[int] = mapped_column(Integer)
+    remarks: Mapped[str] = mapped_column(String(1000), nullable=True)
+    is_pass: Mapped[str] = mapped_column(String[10])
 
 
 with app.app_context():
     db.create_all()
+
+
+def is_pass(i_marks, e_marks):
+    total = i_marks + e_marks
+    if total >= 40 and i_marks > 18 and e_marks > 18:
+        return 'P'
+    else:
+        return 'F'
 
 
 def teacher_only(function):
@@ -184,7 +194,12 @@ def add_grade():
             external_marks=form.external_marks.data,
             subject_credits=form.subject_credits.data,
             semester=form.semester.data,
+            is_pass=is_pass(form.internal_marks.data, form.external_marks.data),
         )
+        if form.remarks.data is not None:
+            grade.remarks = form.remarks.data
+        else:
+            grade.remarks = None
         db.session.add(grade)
         db.session.commit()
         return redirect(url_for('add_grade'))

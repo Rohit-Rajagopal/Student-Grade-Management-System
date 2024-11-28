@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField, SelectField, DecimalField, IntegerField
+from wtforms import StringField, SubmitField, PasswordField, SelectField, IntegerField, TextAreaField
 from wtforms.validators import DataRequired, URL, InputRequired, Email
 from flask_ckeditor import CKEditorField
 from config import semesters, courses, section, designation
@@ -42,6 +42,7 @@ class CreateGradeForm(FlaskForm):
     internal_marks = IntegerField('Internal Score:', validators=[InputRequired('Field cannot be empty.')])
     external_marks = IntegerField('External Score:', validators=[InputRequired('Field cannot be empty.')])
     subject_credits = IntegerField('Subject Credits:', validators=[InputRequired('Field cannot be empty.')])
+    remarks = TextAreaField('Remarks:')
     submit = SubmitField('Add Record')
 
 
