@@ -1,0 +1,29 @@
+{% include "header.html" %}
+
+<div class="container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Semester</th>
+                <th scope="col">SGPA</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for sem in report['semesters'] %}
+            <tr>
+                <td>{{ sem }}</td>
+                <td>{{ report[sem] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td>Overall CGPA</td>
+                <td>{{ report['cgpa'] }}</td>
+            </tr>
+        </tfoot>
+    </table>
+    <p>Backlogs: {{ report['backlogs'] }}</p>
+</div>
+
+{% include "footer.html" %}

@@ -60,6 +60,52 @@ with app.app_context():
     db.create_all()
 
 
+def assign_grade_points(n):
+    if n >= 90:
+        return 10
+    elif n >= 80:
+        return 9
+    elif n >= 70:
+        return 8
+    elif n >= 60:
+        return 7
+    elif n >= 50:
+        return 6
+    elif n >= 45:
+        return 5
+    elif n >= 40:
+        return 4
+    else:
+        return 0
+
+
+def generate_report(user: User):
+    semesters = []
+    for i in range(1, 9):
+        for sub in user.grades:
+            if sub.semester == i:
+                semesters.append(i)
+                break
+    report = {}
+    cgpa = 0
+    backlogs = 0
+    for sem in semesters:
+        cred = 0
+        t_creds = 0
+        for sub in user.grades:
+            if sub.semester == sem:
+                cred += assign_grade_points(sub.internal_marks + sub.external_marks) * sub.subject_credits
+                t_creds += sub.subject_credits
+                if is_pass(sub.internal_marks, sub.external_marks) == 'F':
+                    backlogs += 1
+        report[sem] = round((cred / t_creds), 2)
+        cgpa += cred / t_creds
+    report['cgpa'] = round((cgpa / len(semesters)), 2)
+    report['backlogs'] = backlogs
+    report['semesters'] = semesters
+    return report
+
+
 def is_pass(i_marks, e_marks):
     total = i_marks + e_marks
     if total >= 40 and i_marks >= 18 and e_marks >= 18:
@@ -222,6 +268,7 @@ def show_grades():
 
 
 @app.route('/edit_grade', methods=['GET', 'POST'])
+@teacher_only
 def edit_grade():
     grade = db.get_or_404(UserGrade, request.args.get('id'))
     form = CreateGradeForm(
@@ -251,12 +298,24 @@ def edit_grade():
 
 
 @app.route('/delete')
+@teacher_only
 def delete():
     grade = db.get_or_404(UserGrade, request.args.get('id'))
     usn = grade.student.usn
     db.session.delete(grade)
     db.session.commit()
     return redirect(url_for('show_grades', usn=usn))
+
+
+@app.route('/report', methods=['GET', 'POST'])
+@student_specific
+def show_report():
+    if request.method == 'POST':
+        student = db.session.execute(db.select(User).where(User.usn == request.form['usn'].upper())).scalar()
+    else:
+        student = db.session.execute(db.select(User).where(User.usn == request.args.get('usn').upper())).scalar()
+    report = generate_report(student)
+    return render_template('report.html', report=report)
 
 
 if __name__ == "__main__":

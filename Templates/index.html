@@ -12,9 +12,17 @@
             {{ render_form(form) }}
             <h3 class="mt-5 mb-2">Add a grade:</h3>
             <a href="{{ url_for('add_grade') }}"><button class="btn btn-primary mt-2">Add Grade</button></a>
+            <h3 class="mt-5 mb-2">Check report cards:</h3>
+            <form action="{{ url_for('show_report') }}" method="post">
+                <label for="student-usn"><b>USN:</b></label>
+                <input type="text" id="student-usn" name="usn">
+                <button type="submit" class="btn btn-primary">Get report card</button>
+            </form>
         {% else %}
             <h3 class="mt-3 mb-2">Check your grades:</h3>
             <a href="{{ url_for('show_grades', usn=current_user.usn) }}"><button class="btn btn-primary">Check grades</button></a>
+            <h3 class="my-2">Check your report card:</h3>
+            <a href="{{ url_for('show_report', usn=current_user.usn) }}"><button class="btn btn-primary">Check report card</button></a>
         {% endif %}
     {% endif %}
 </div>
