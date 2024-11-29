@@ -19,6 +19,9 @@
                 <th scope="col">Credits</th>
                 <th scope="col">Result</th>
                 <th scope="col">Remarks</th>
+                {% if current_user.is_authenticated and current_user.designation == 'Teacher' %}
+                <th></th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
@@ -36,6 +39,12 @@
                 <td>{{ sub.remarks }}</td>
                 {% else %}
                 <td></td>
+                {% endif %}
+                {% if current_user.is_authenticated and current_user.designation == 'Teacher' %}
+                <td>
+                    <a href="{{ url_for('edit_grade', id=sub.id) }}"><button class="btn btn-sm">✎</button></a>
+                    <a href="{{ url_for('delete', id=sub.id) }}"><button class="btn btn-sm">🗑</button></a>
+                </td>
                 {% endif %}
             </tr>
             {% endif %}

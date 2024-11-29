@@ -62,7 +62,7 @@ with app.app_context():
 
 def is_pass(i_marks, e_marks):
     total = i_marks + e_marks
-    if total >= 40 and i_marks > 18 and e_marks > 18:
+    if total >= 40 and i_marks >= 18 and e_marks >= 18:
         return 'P'
     else:
         return 'F'
@@ -75,6 +75,7 @@ def teacher_only(function):
             return function(*args, **kwargs)
         else:
             return abort(403)
+
     return wrapper_function
 
 
@@ -88,6 +89,7 @@ def student_specific(function):
             return function(*args, **kwargs)
         else:
             return abort(403)
+
     return wrapper_function
 
 
@@ -200,12 +202,6 @@ def add_grade():
             grade.remarks = form.remarks.data
         else:
             grade.remarks = None
-        if db.session.execute(db.select(UserGrade).where(
-                (UserGrade.subject_code == form.subject_code.data.upper()) &
-                (UserGrade.student_id == (db.session.execute(db.select(User).where(User.usn == form.usn.data.upper()))).scalar().id))) is not None:
-            old_grade = db.session.execute(
-                db.select(UserGrade).where(UserGrade.subject_code == form.subject_code.data.upper())).scalar()
-            db.session.delete(old_grade)
         db.session.add(grade)
         db.session.commit()
         return redirect(url_for('add_grade'))
@@ -223,6 +219,44 @@ def show_grades():
                 semesters.append(i)
                 break
     return render_template('grades.html', user=user, semesters=semesters)
+
+
+@app.route('/edit_grade', methods=['GET', 'POST'])
+def edit_grade():
+    grade = db.get_or_404(UserGrade, request.args.get('id'))
+    form = CreateGradeForm(
+        usn=grade.student.usn,
+        semester=grade.semester,
+        subject_name=grade.subject,
+        subject_code=grade.subject_code,
+        internal_marks=grade.internal_marks,
+        external_marks=grade.external_marks,
+        subject_credits=grade.subject_credits,
+        remarks=grade.remarks,
+    )
+    if form.validate_on_submit():
+        grade.student = db.session.execute(db.select(User).where(User.usn == form.usn.data.upper())).scalar()
+        grade.student_id = db.session.execute(db.select(User).where(User.usn == form.usn.data.upper())).scalar().id
+        grade.semester = form.semester.data
+        grade.subject = form.subject_name.data
+        grade.subject_code = form.subject_code.data
+        grade.internal_marks = form.internal_marks.data
+        grade.external_marks = form.external_marks.data
+        grade.subject_credits = form.subject_credits.data
+        grade.remarks = form.remarks.data
+        grade.is_pass = is_pass(form.internal_marks.data, form.external_marks.data)
+        db.session.commit()
+        return redirect(url_for('show_grades', usn=grade.student.usn))
+    return render_template('add_grade.html', form=form)
+
+
+@app.route('/delete')
+def delete():
+    grade = db.get_or_404(UserGrade, request.args.get('id'))
+    usn = grade.student.usn
+    db.session.delete(grade)
+    db.session.commit()
+    return redirect(url_for('show_grades', usn=usn))
 
 
 if __name__ == "__main__":
