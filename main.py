@@ -12,7 +12,7 @@ import os
 from forms import *
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = "d297744219d80b07436ff5f8bd0ddde21d5596d89a023dfa24ae8a24729718e6"
+app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
 ckeditor = CKEditor(app)
 Bootstrap5(app)
 login_manager = LoginManager()
@@ -391,4 +391,4 @@ def features():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False)
