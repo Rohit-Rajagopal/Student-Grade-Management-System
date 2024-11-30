@@ -24,6 +24,11 @@
         </tfoot>
     </table>
     <p>Backlogs: {{ report['backlogs'] }}</p>
+    <ul>
+    {% for backlog in report['backlogs_list'] %}
+        <li>{{ backlog }}</li>
+    {% endfor %}
+    </ul>
 </div>
 
 {% include "footer.html" %}

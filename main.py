@@ -89,6 +89,7 @@ def generate_report(user: User):
     report = {}
     cgpa = 0
     backlogs = 0
+    backlogs_list = []
     for sem in semesters:
         cred = 0
         t_creds = 0
@@ -98,10 +99,12 @@ def generate_report(user: User):
                 t_creds += sub.subject_credits
                 if is_pass(sub.internal_marks, sub.external_marks) == 'F':
                     backlogs += 1
+                    backlogs_list.append(sub.subject_code)
         report[sem] = round((cred / t_creds), 2)
         cgpa += cred / t_creds
     report['cgpa'] = round((cgpa / len(semesters)), 2)
     report['backlogs'] = backlogs
+    report['backlogs_list'] = backlogs_list
     report['semesters'] = semesters
     return report
 
@@ -377,7 +380,6 @@ def delete_profile():
     return render_template('confirm_delete.html')
 
 
-# TODO 3: Add features and about html pages
 @app.route('/about')
 def about():
     return render_template('about.html')
@@ -386,7 +388,6 @@ def about():
 @app.route('/features')
 def features():
     return render_template('features.html')
-# TODO 4: (If possible) Add pre-populated "ADD GRADE" to show_grade
 
 
 if __name__ == "__main__":
