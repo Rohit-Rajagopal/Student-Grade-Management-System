@@ -1,0 +1,17 @@
+{% include "header.html" %}
+
+<h2 style="text-align: center">User Profile:</h2>
+<div class="container">
+    <p><b>Name:</b> {{ current_user.name }}</p>
+    <p><b>Email:</b> {{ current_user.email }}</p>
+    <p><b>Designation:</b> {{ current_user.designation }}</p>
+    {% if current_user.designation == "Student" %}
+        <p><b>USN:</b> {{ current_user.usn }}</p>
+        <p><b>Semester:</b> {{ current_user.semester }}</p>
+        <p><b>Course:</b> {{ current_user.course }}</p>
+        <p><b>Section:</b> {{ current_user.section }}</p>
+    {% endif %}
+    <a href="{{ url_for('edit_profile') }}"><button class="btn btn-success">Edit Profile</button></a>
+</div>
+
+{% include "footer.html" %}

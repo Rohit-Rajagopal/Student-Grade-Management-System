@@ -4,12 +4,12 @@ from flask_ckeditor import CKEditor
 from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user, login_required
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship, DeclarativeBase, Mapped, mapped_column
-from sqlalchemy import Integer, String, Text, ForeignKey
+from sqlalchemy import Integer, String, ForeignKey
 from typing import List
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
-from forms import CreateTeacherForm, CreateStudentForm, ChooseDesignation, CreateLoginForm, CreateGradeForm, GetUSN
+from forms import *
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "d297744219d80b07436ff5f8bd0ddde21d5596d89a023dfa24ae8a24729718e6"
@@ -149,7 +149,11 @@ def home():
     if current_user.is_authenticated and current_user.designation == 'Teacher':
         form = GetUSN()
         if form.validate_on_submit():
-            return redirect(url_for('show_grades', usn=form.usn.data.upper()))
+            if db.session.execute(db.select(User).where(User.usn == form.usn.data.upper())).scalar() is not None:
+                return redirect(url_for('show_grades', usn=form.usn.data.upper()))
+            else:
+                flash('No student by that usn')
+                return redirect(url_for('home'))
         return render_template('index.html', form=form)
     else:
         return render_template('index.html')
@@ -316,6 +320,46 @@ def show_report():
         student = db.session.execute(db.select(User).where(User.usn == request.args.get('usn').upper())).scalar()
     report = generate_report(student)
     return render_template('report.html', report=report)
+
+
+# TODO 1: Add profile feature with editing capability
+@app.route('/profile')
+@login_required
+def profile():
+    return render_template('profile.html')
+
+
+@app.route('/edit-profile', methods=['GET', 'POST'])
+@login_required
+def edit_profile():
+    if current_user.designation == 'Student':
+        form = CreateProfileEditFormStudent(
+            name=current_user.name,
+            email=current_user.email,
+            usn=current_user.usn,
+            semester=current_user.semester,
+            course=current_user.course,
+            section=current_user.section,
+        )
+    else:
+        form = CreateProfileEditFormTeacher(
+            name=current_user.name,
+            email=current_user.email
+        )
+    if form.validate_on_submit():
+        current_user.name = form.name.data
+        current_user.email = form.email.data
+        if current_user.designation == 'Student':
+            current_user.usn = form.usn.data
+            current_user.semester = form.semester.data
+            current_user.course = form.course.data
+            current_user.section = form.section.data
+        db.session.commit()
+        return redirect(url_for('profile'))
+    return render_template('edit_profile.html', form=form)
+# TODO 2: Add hero to index.html
+# TODO 3: Add features and about html pages
+# TODO 4: (If possible) Add pre-populated "ADD GRADE" to show_grade
 
 
 if __name__ == "__main__":

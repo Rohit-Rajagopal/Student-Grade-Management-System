@@ -49,3 +49,19 @@ class CreateGradeForm(FlaskForm):
 class GetUSN(FlaskForm):
     usn = StringField('USN:', validators=[InputRequired('Field cannot be empty.')])
     submit = SubmitField('Search Grades')
+
+
+class CreateProfileEditFormStudent(FlaskForm):
+    name = StringField('Name:', validators=[InputRequired('Field cannot be empty.')])
+    email = StringField('Email:', validators=[InputRequired('Field cannot be empty.'), Email('Enter a valid email.')])
+    usn = StringField('USN:', validators=[InputRequired('Field cannot be empty.')])
+    semester = SelectField('Semester:', choices=semesters)
+    course = SelectField('Course:', choices=courses)
+    section = SelectField('Section:', choices=section)
+    submit = SubmitField('Confirm')
+
+
+class CreateProfileEditFormTeacher(FlaskForm):
+    name = StringField('Name:', validators=[InputRequired('Field cannot be empty.')])
+    email = StringField('Email:', validators=[InputRequired('Field cannot be empty.'), Email('Enter a valid email.')])
+    submit = SubmitField('Confirm')
