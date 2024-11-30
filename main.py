@@ -241,6 +241,12 @@ def logout():
 def add_grade():
     form = CreateGradeForm()
     if form.validate_on_submit():
+        if db.session.execute(db.select(User).where(User.usn == form.usn.data.upper())).scalar() is None:
+            flash('No registered student by that usn.')
+            return redirect(url_for('add_grade'))
+        if form.internal_marks.data > 50 or form.external_marks.data > 50:
+            flash("Internal and external marks are graded out of 50.")
+            return redirect(url_for('add_grade'))
         grade = UserGrade(
             subject=form.subject_name.data,
             subject_code=form.subject_code.data.upper(),
@@ -289,6 +295,12 @@ def edit_grade():
         remarks=grade.remarks,
     )
     if form.validate_on_submit():
+        if db.session.execute(db.select(User).where(User.usn == form.usn.data.upper())).scalar() is None:
+            flash('No registered student by that usn.')
+            return redirect(url_for('edit_grade', id=request.args.get('id')))
+        if form.internal_marks.data > 50 or form.external_marks.data > 50:
+            flash("Internal and external marks are graded out of 50.")
+            return redirect(url_for('edit_grade', id=request.args.get('id')))
         grade.student = db.session.execute(db.select(User).where(User.usn == form.usn.data.upper())).scalar()
         grade.student_id = db.session.execute(db.select(User).where(User.usn == form.usn.data.upper())).scalar().id
         grade.semester = form.semester.data

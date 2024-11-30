@@ -4,6 +4,13 @@
 
 <h1 style="text-align: center">Add Grades</h1>
 <div>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <p class="flash">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
     {{ render_form(form) }}
 </div>
 

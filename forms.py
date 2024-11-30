@@ -36,7 +36,7 @@ class CreateLoginForm(FlaskForm):
 
 class CreateGradeForm(FlaskForm):
     usn = StringField('USN:', validators=[InputRequired('Field cannot be empty.')])
-    semester = IntegerField('Semester:', validators=[InputRequired('Field cannot be empty.')])
+    semester = SelectField('Semester:', choices=semesters)
     subject_name = StringField('Subject name:', validators=[InputRequired('Field cannot be empty.')])
     subject_code = StringField('Subject Code:', validators=[InputRequired('Field cannot be empty.')])
     internal_marks = IntegerField('Internal Score:', validators=[InputRequired('Field cannot be empty.')])
