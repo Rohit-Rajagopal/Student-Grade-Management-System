@@ -1,0 +1,15 @@
+{% include "header.html" %}
+
+<h2 style="text-align: center">Delete Account</h2>
+<div class="container">
+    <form method="post" action="{{ url_for('delete_profile') }}" style="display: flex; flex-direction: column;">
+        <label for="confirmation">Are you sure you want to delete your account?</label>
+        <select id="confirmation" name="confirm" style="width: 60px" class="my-3">
+            <option value="No">No</option>
+            <option value="Yes">Yes</option>
+        </select>
+        <button type="submit" class="btn btn-danger my-1" style="width: 150px">Confirm</button>
+    </form>
+</div>
+
+{% include "footer.html" %}

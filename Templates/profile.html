@@ -12,6 +12,7 @@
         <p><b>Section:</b> {{ current_user.section }}</p>
     {% endif %}
     <a href="{{ url_for('edit_profile') }}"><button class="btn btn-success">Edit Profile</button></a>
+    <a href="{{ url_for('delete_profile') }}"><button class="btn btn-danger">Delete Account</button></a>
 </div>
 
 {% include "footer.html" %}

@@ -322,7 +322,6 @@ def show_report():
     return render_template('report.html', report=report)
 
 
-# TODO 1: Add profile feature with editing capability
 @app.route('/profile')
 @login_required
 def profile():
@@ -357,6 +356,25 @@ def edit_profile():
         db.session.commit()
         return redirect(url_for('profile'))
     return render_template('edit_profile.html', form=form)
+
+
+@app.route('/delete_profile', methods=["GET", "POST"])
+@login_required
+def delete_profile():
+    if request.method == "POST":
+        option = request.form['confirm']
+        if option == 'No':
+            return redirect(url_for('profile'))
+        else:
+            user = db.get_or_404(User, current_user.id)
+            logout_user()
+            if user.designation == 'Student':
+                for sub in user.grades:
+                    db.session.delete(sub)
+            db.session.delete(user)
+            db.session.commit()
+            return redirect(url_for('home'))
+    return render_template('confirm_delete.html')
 # TODO 2: Add hero to index.html
 # TODO 3: Add features and about html pages
 # TODO 4: (If possible) Add pre-populated "ADD GRADE" to show_grade
