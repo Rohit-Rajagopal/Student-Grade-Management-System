@@ -375,8 +375,17 @@ def delete_profile():
             db.session.commit()
             return redirect(url_for('home'))
     return render_template('confirm_delete.html')
-# TODO 2: Add hero to index.html
+
+
 # TODO 3: Add features and about html pages
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
+
+@app.route('/features')
+def features():
+    return render_template('features.html')
 # TODO 4: (If possible) Add pre-populated "ADD GRADE" to show_grade
 
 
