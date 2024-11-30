@@ -321,6 +321,9 @@ def show_report():
         student = db.session.execute(db.select(User).where(User.usn == request.form['usn'].upper())).scalar()
     else:
         student = db.session.execute(db.select(User).where(User.usn == request.args.get('usn').upper())).scalar()
+    if not student.grades:
+        flash("No grades added yet for that student. Add some grades to check report card.")
+        return redirect(url_for('home'))
     report = generate_report(student)
     return render_template('report.html', report=report)
 
